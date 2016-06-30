@@ -480,12 +480,16 @@ var MMCQ = (function() {
 
 var PicPalette = function (){};
 
-PicPalette.prototype.getPalette = function (srcImg,numOfColors){
+PicPalette.prototype.getPalette = function (srcImg,numOfColors,callback){
     
+    if(numOfColors == undefined)
+            this.numOfColors = numOfColors = 4;
+    else
+        this.numOfColors = numOfColors;
     //Loading image to buffer canvas and extracting pixels
     var img = new Image();
     img.src = srcImg;
-    var Canvas = document.createElement('canvas');
+    var Canvas = this.canvas = document.createElement('canvas');
    
 
     img.onload = function (){
@@ -493,11 +497,11 @@ PicPalette.prototype.getPalette = function (srcImg,numOfColors){
     Canvas.height = img.height;
     var ctx = Canvas.getContext('2d');
     ctx.drawImage(img,0,0);
-    var pixels = ctx.getImageData(0, 0, Canvas.width, Canvas.height);
+    //var pixels = ctx.getImageData(0, 0, Canvas.width, Canvas.height);
      //storing the Uint8ClampedArray
     
-    this.pixelArray = ctx.getImageData(0, 0, Canvas.width, Canvas.height).data;
-    console.log(pixels);
+    this.pixelArray = ctx.getImageData(0, 0, img.width, img.height).data;
+    //console.log(pixels);
 
     this.pixels = [];
     i=0;
@@ -508,10 +512,45 @@ PicPalette.prototype.getPalette = function (srcImg,numOfColors){
         }
     }
 
-    console.log(this.pixels);
+    var myPixels = this.pixels ;
+    var cmap = MMCQ.quantize(myPixels, numOfColors);
+    this.newPalette = cmap.palette();
+    var newPixels = myPixels.map(function(p) { 
+        return cmap.map(p); 
+    });
+
+    //console.log(this.newPalette);
+
+    callback(this.newPalette);
 
     };
    
 
 };
+
+PicPalette.prototype.addImgCanvas = function(id){
+    if(id != undefined)
+        this.canvas.setAttribute("id", id);
+    document.body.appendChild(this.canvas);
+};
+
+PicPalette.prototype.addPaletteCanvas = function(Palette,id){
+    var PaletteCanvas = this.paletteCanvas = document.createElement('canvas');
+    if(id != undefined)
+        this.paletteCanvas.setAttribute("id", id);
+    console.log(Palette.length);
+
+    PaletteCanvas.width = Palette.length * 20;
+    PaletteCanvas.height = 20;
+    var ctx = PaletteCanvas.getContext('2d');
+    for(i=0;i<Palette.length;i++){
+        ctx.beginPath();
+        ctx.rect(i*20, 0, 20, 20);
+        ctx.fillStyle = "rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+")";
+        ctx.fill();
+
+    }
+    document.body.appendChild(PaletteCanvas);
+
+}
 
