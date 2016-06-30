@@ -474,7 +474,7 @@ var MMCQ = (function() {
 * Copyright (c) 2016, Hemant Kr. Singh
 * All rights reserved. (MIT Licensed)
 *
-* PicPalette.js - an image quantization lib
+* PicPalette.js - get Palette from an image
 */
 
 
@@ -483,41 +483,42 @@ var PicPalette = function (){};
 PicPalette.prototype.getPalette = function (srcImg,numOfColors,callback){
     
     if(numOfColors == undefined)
-            this.numOfColors = numOfColors = 4;
+        this.numOfColors = numOfColors = 4;
     else
         this.numOfColors = numOfColors;
+    
     //Loading image to buffer canvas and extracting pixels
     var img = new Image();
     img.src = srcImg;
     var Canvas = this.canvas = document.createElement('canvas');
+    this.paletteCanvas = document.createElement('canvas');
    
-
     img.onload = function (){
-    Canvas.width = img.width;
-    Canvas.height = img.height;
-    var ctx = Canvas.getContext('2d');
-    ctx.drawImage(img,0,0);
-    //var pixels = ctx.getImageData(0, 0, Canvas.width, Canvas.height);
-     //storing the Uint8ClampedArray
+        Canvas.width = img.width;
+        Canvas.height = img.height;
+        var ctx = Canvas.getContext('2d');
+        ctx.drawImage(img,0,0);
+        //var pixels = ctx.getImageData(0, 0, Canvas.width, Canvas.height);
+        //storing the Uint8ClampedArray
     
-    this.pixelArray = ctx.getImageData(0, 0, img.width, img.height).data;
-    //console.log(pixels);
+        this.pixelArray = ctx.getImageData(0, 0, img.width, img.height).data;
+        //console.log(pixels);
 
-    this.pixels = [];
-    i=0;
-    for(x=0;x<img.width;x++){
-        for(y=0;y<img.height;y++){
-        currentPos = y * img.height * 4 + x * 4; //maps x,y to Uint8ClampedArray pos
-        this.pixels[i++] = [this.pixelArray[currentPos],this.pixelArray[currentPos+1],this.pixelArray[currentPos+2]]
+        this.pixels = [];
+        i=0;
+        for(x=0;x<img.width;x++){
+            for(y=0;y<img.height;y++){
+            currentPos = y * img.height * 4 + x * 4; //maps x,y to Uint8ClampedArray pos
+            this.pixels[i++] = [this.pixelArray[currentPos],this.pixelArray[currentPos+1],this.pixelArray[currentPos+2]]
+            }
         }
-    }
 
-    var myPixels = this.pixels ;
-    var cmap = MMCQ.quantize(myPixels, numOfColors);
-    this.newPalette = cmap.palette();
-    var newPixels = myPixels.map(function(p) { 
-        return cmap.map(p); 
-    });
+        var myPixels = this.pixels ;
+        var cmap = MMCQ.quantize(myPixels, numOfColors);
+        this.newPalette = cmap.palette();
+        var newPixels = myPixels.map(function(p) { 
+            return cmap.map(p); 
+        });
 
     //console.log(this.newPalette);
 
@@ -528,29 +529,27 @@ PicPalette.prototype.getPalette = function (srcImg,numOfColors,callback){
 
 };
 
-PicPalette.prototype.addImgCanvas = function(id){
-    if(id != undefined)
-        this.canvas.setAttribute("id", id);
-    document.body.appendChild(this.canvas);
+PicPalette.prototype.addImgCanvas = function(divId){
+    div = document.getElementById(divId);
+    div.appendChild(this.canvas);
+    return this.canvas;
 };
 
-PicPalette.prototype.addPaletteCanvas = function(Palette,id){
-    var PaletteCanvas = this.paletteCanvas = document.createElement('canvas');
-    if(id != undefined)
-        this.paletteCanvas.setAttribute("id", id);
-    console.log(Palette.length);
-
-    PaletteCanvas.width = Palette.length * 20;
-    PaletteCanvas.height = 20;
-    var ctx = PaletteCanvas.getContext('2d');
+PicPalette.prototype.addPaletteCanvas = function(Palette,divId){
+    div = document.getElementById(divId);
+    this.paletteCanvas.width = Palette.length * 40;
+    this.paletteCanvas.height = 40;
+    var ctx = this.paletteCanvas.getContext('2d');
     for(i=0;i<Palette.length;i++){
         ctx.beginPath();
-        ctx.rect(i*20, 0, 20, 20);
+        ctx.rect(i*40, 0, 40, 40);
         ctx.fillStyle = "rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+")";
         ctx.fill();
 
     }
-    document.body.appendChild(PaletteCanvas);
+    div.innerHTML="";
+    div.appendChild(this.paletteCanvas);
+    return this.paletteCanvas;
 
 }
 

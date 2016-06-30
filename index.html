@@ -4,27 +4,118 @@
 <head>
     <title> imgstat</title>
   
-      <script type="text/javascript" src="PicPalette.js"></script>
+    <script type="text/javascript" src="PicPalette.js"></script>
+	<style>
+	body {
+		text-align: center;
+		padding-top: 50px;
+	}
+	#pic{
+		max-height: 50%;
+		max-width: 50%;
+		max-height: 300px;
+		
+
+    }   
+
+
+/* Input styling CSS from http://codepen.io/CreativeJuiz */
+.imageLoader {
+  position: relative;
+}
+.imageLoader label {
+  background: #39D2B4;
+  padding: 5px 20px;
+  color: #fff;
+  font-weight: bold;
+  font-size: .9em;
+  transition: all .4s;
+}
+.imageLoader input {
+  position: absolute;
+  display: inline-block;
+  left: 0;
+  top: 0;
+  opacity: 0.01;
+  cursor: pointer;
+}
+.imageLoader input:hover + label,
+.imageLoader input:focus + label {
+  background: #34495E;
+  color: #39D2B4;
+}
 
 
 
-    <style>
-
-       
     </style>
+	
 </head>
    
 <body>
-    <canvas width="400" height="229" id="imgCanvas">
-    <div id="details"></div>
+	<h2> PicPalette </h2>
+	<div> Convert any image to color palette</div><br/>
+	<img id="pic" src="sample2.jpg">
+	<div>
+	<div id="paletteCanvas"></div>
+	<form action="#">
+  <p class="imageLoader">
+    <input type="file" name="imageLoader" id="imageLoader" />
+    <label id="label" for="imageLoader" >Upload your image</label>
+  </p>
+</form>
+   
+    </div>
+    
+
 </body>
 <script type="text/javascript">
 
+var img = document.getElementById('pic');
+//img.setAttribute("id", "pic");
+//img.src = "sample2.jpg";
+var Palette = [];
 var scan = new PicPalette();
-scan.getPalette("sample1.png",12);
+scan.getPalette(img.src,5,
+
+function(newPalette){
+		Palette = newPalette;
+		console.log(Palette);
+		//scan.addImgCanvas("picCanvas");
+		//document.body.appendChild(img);
+		scan.addPaletteCanvas(Palette,"paletteCanvas");
+		pagePalette(Palette);
+	});
 
 
 
+var imageLoader = document.getElementById('imageLoader');
+imageLoader.addEventListener('change', handleImage, false);
+
+function handleImage(e){
+    var reader = new FileReader();
+    reader.onload = function(event){
+        
+    img.onload = function(){
+        scan.getPalette(img.src, 5, function(newPalette){
+			Palette = newPalette;
+			console.log(Palette);
+			//scan.addImgCanvas("picCanvas");
+			//document.body.appendChild(img);
+			scan.addPaletteCanvas(Palette,"paletteCanvas");
+			pagePalette(Palette);
+			});
+        }
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);     
+}
+
+
+function pagePalette(Palette){
+	document.getElementById('label').style.color = "rgb("+Palette[0][0]+","+Palette[0][1]+","+Palette[0][2]+")";
+	document.getElementById('label').style.background = "rgb("+Palette[1][0]+","+Palette[1][1]+","+Palette[1][2]+")";
+
+}
 
 
 </script>
