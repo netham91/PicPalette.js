@@ -58,6 +58,7 @@
 	<div>
 	<div id="paletteCanvas"></div>
 	<div id="paletteCodes"></div>
+	<div id="paletteBlocks"></div>
 	<form action="#">
   <p class="imageLoader">
     <input type="file" name="imageLoader" id="imageLoader" />
@@ -124,12 +125,28 @@ function insertPalette(Palette){
 	document.getElementById('paletteCodes').innerHTML = "";
 	for(i=0;i<Palette.length;i++){
 
-		var dateSpan = document.createElement('span')
-		dateSpan.innerHTML = " rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+") ";
-		dateSpan.style.color = "rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+")";
+		// var colorSpan = document.createElement('span')
+		// colorSpan.innerHTML = " rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+") ";
+		// colorSpan.style.background = "rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+")";
+
 		
-		document.getElementById('paletteCodes').appendChild(dateSpan);
+		// document.getElementById('paletteCodes').appendChild(colorSpan);
+
+		var colorText = document.createElement('span')
+		colorText.innerHTML = " rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+")";
+		colorText.innerHTML += " | #" + ToHex(Palette[i][0]) + ToHex(Palette[i][1]) + ToHex(Palette[i][2])+"<br/> ";
+		colorText.style.color = "rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+")";
+
+		
+		document.getElementById('paletteCodes').appendChild(colorText);
+
+
 	}
+}
+
+function ToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
 }
 
 
