@@ -57,6 +57,7 @@
 	<img id="pic" src="sample2.jpg">
 	<div>
 	<div id="paletteCanvas"></div>
+	<div id="paletteCodes"></div>
 	<form action="#">
   <p class="imageLoader">
     <input type="file" name="imageLoader" id="imageLoader" />
@@ -84,6 +85,7 @@ function(newPalette){
 		//document.body.appendChild(img);
 		scan.addPaletteCanvas(Palette,"paletteCanvas");
 		pagePalette(Palette);
+		insertPalette(Palette);
 	});
 
 
@@ -103,6 +105,7 @@ function handleImage(e){
 			//document.body.appendChild(img);
 			scan.addPaletteCanvas(Palette,"paletteCanvas");
 			pagePalette(Palette);
+			insertPalette(Palette);
 			});
         }
         img.src = event.target.result;
@@ -115,6 +118,18 @@ function pagePalette(Palette){
 	document.getElementById('label').style.color = "rgb("+Palette[0][0]+","+Palette[0][1]+","+Palette[0][2]+")";
 	document.getElementById('label').style.background = "rgb("+Palette[1][0]+","+Palette[1][1]+","+Palette[1][2]+")";
 
+}
+
+function insertPalette(Palette){
+	document.getElementById('paletteCodes').innerHTML = "";
+	for(i=0;i<Palette.length;i++){
+
+		var dateSpan = document.createElement('span')
+		dateSpan.innerHTML = " rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+") ";
+		dateSpan.style.color = "rgb("+Palette[i][0]+","+Palette[i][1]+","+Palette[i][2]+")";
+		
+		document.getElementById('paletteCodes').appendChild(dateSpan);
+	}
 }
 
 

@@ -547,6 +547,7 @@ PicPalette.prototype.addPaletteCanvas = function(Palette,divId){
         ctx.fill();
 
     }
+    
     div.innerHTML="";
     div.appendChild(this.paletteCanvas);
     return this.paletteCanvas;
